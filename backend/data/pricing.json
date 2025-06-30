@@ -1,0 +1,43 @@
+{
+  "pricing_tiers": {
+    "off_peak": {
+      "hours": [0, 1, 2, 3, 4, 5],
+      "rate_dh_kwh": 0.85,
+      "description": "Night hours - cheapest rate",
+      "savings_potential": "high"
+    },
+    "normal": {
+      "hours": [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 22, 23],
+      "rate_dh_kwh": 1.20,
+      "description": "Standard daytime rate", 
+      "savings_potential": "medium"
+    },
+    "peak": {
+      "hours": [16, 17, 18, 19, 20, 21],
+      "rate_dh_kwh": 1.65,
+      "description": "Evening peak - most expensive",
+      "savings_potential": "critical"
+    }
+  },
+  "monthly_base_fee_dh": 45.00,
+  "tax_rate": 0.14,
+  "currency": "DH",
+  "utility_company": "ONEE",
+  "country": "Morocco",
+  "last_updated": "2024-01-01",
+  "demand_charges": {
+    "residential_threshold_kw": 10,
+    "commercial_rate_dh_kw": 25.00
+  },
+  "seasonal_adjustments": {
+    "summer_months": [6, 7, 8, 9],
+    "summer_multiplier": 1.1,
+    "winter_months": [12, 1, 2, 3],
+    "winter_multiplier": 0.95
+  },
+  "conservation_incentives": {
+    "efficiency_bonus_threshold": 0.15,
+    "efficiency_bonus_rate": 0.05,
+    "renewable_credit_dh_kwh": 0.02
+  }
+} 

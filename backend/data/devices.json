@@ -1,0 +1,69 @@
+{
+  "devices": {
+    "living_room_ac": {
+      "name": "Living Room AC",
+      "power_watts": 2000,
+      "priority": "high",
+      "controllable": true,
+      "room": "living_room",
+      "usage_pattern": "temperature_dependent",
+      "efficiency_rating": 0.85,
+      "target_temperature_range": [20, 26]
+    },
+    "bedroom_ac": {
+      "name": "Bedroom AC", 
+      "power_watts": 1500,
+      "priority": "high",
+      "controllable": true,
+      "room": "bedroom",
+      "usage_pattern": "schedule_based",
+      "efficiency_rating": 0.82,
+      "target_temperature_range": [20, 24]
+    },
+    "led_lights": {
+      "name": "LED Lighting System",
+      "power_watts": 80,
+      "priority": "medium",
+      "controllable": true,
+      "room": "all",
+      "usage_pattern": "schedule_based",
+      "efficiency_rating": 0.95,
+      "dimming_capability": true
+    },
+    "refrigerator": {
+      "name": "Refrigerator",
+      "power_watts": 150,
+      "priority": "critical",
+      "controllable": false,
+      "room": "kitchen",
+      "usage_pattern": "constant",
+      "efficiency_rating": 0.88,
+      "defrost_cycle": true
+    },
+    "washing_machine": {
+      "name": "Washing Machine",
+      "power_watts": 800,
+      "priority": "low",
+      "controllable": true,
+      "room": "utility",
+      "usage_pattern": "manual",
+      "efficiency_rating": 0.75,
+      "cycle_duration_minutes": 90
+    },
+    "tv_entertainment": {
+      "name": "TV & Entertainment",
+      "power_watts": 200,
+      "priority": "low",
+      "controllable": true,
+      "room": "living_room", 
+      "usage_pattern": "evening_peak",
+      "efficiency_rating": 0.80,
+      "standby_power": 15
+    }
+  },
+  "total_devices": 6,
+  "total_max_consumption": 4730,
+  "critical_devices": ["refrigerator"],
+  "high_priority_devices": ["living_room_ac", "bedroom_ac"],
+  "controllable_devices": ["living_room_ac", "bedroom_ac", "led_lights", "washing_machine", "tv_entertainment"]
+} 
