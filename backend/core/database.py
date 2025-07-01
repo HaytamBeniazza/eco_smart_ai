@@ -203,7 +203,7 @@ class DatabaseManager:
     """Database connection and session management"""
     
     def __init__(self, database_url: str = None):
-        self.database_url = database_url or settings.database_url
+        self.database_url = database_url or "sqlite:///ecosmart.db"
         self.engine = None
         self.SessionLocal = None
         
@@ -211,7 +211,7 @@ class DatabaseManager:
         """Initialize database connection and create tables"""
         self.engine = create_engine(
             self.database_url,
-            echo=settings.database_echo,
+            echo=False,
             connect_args={"check_same_thread": False}  # For SQLite
         )
         
@@ -341,8 +341,8 @@ def get_daily_savings(session: Session, target_date: date = None) -> Dict[str, A
     }
 
 
-# Global database manager instance
-db_manager = DatabaseManager()
+# Global database manager instance (lazy initialization)
+db_manager = None
 
 # Global engine instance for agent access
 engine = None
@@ -351,6 +351,10 @@ engine = None
 # Dependency for FastAPI
 def get_db_session():
     """Dependency to get database session for FastAPI endpoints"""
+    global db_manager
+    if db_manager is None:
+        db_manager = DatabaseManager()
+        db_manager.initialize()
     session = db_manager.get_session()
     try:
         yield session
@@ -366,13 +370,18 @@ def get_db():
 
 # Initialize database on module import
 def init_database():
-    """Initialize database system"""
-    global engine
+    """Initialize the database with tables and sample data"""
     try:
-        db_manager.initialize()
-        engine = db_manager.engine  # Set global engine for agent access
+        global db_manager
+        if db_manager is None:
+            db_manager = DatabaseManager()
+            db_manager.initialize()
         print("✅ Database initialized successfully")
-        return True
     except Exception as e:
-        print(f"❌ Database initialization failed: {e}")
-        return False 
+        print(f"❌ Failed to initialize database: {e}")
+        raise
+
+def get_db_connection():
+    """Get a direct SQLite connection for simple queries"""
+    import sqlite3
+    return sqlite3.connect("ecosmart.db") 
