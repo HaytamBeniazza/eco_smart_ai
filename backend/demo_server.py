@@ -7,6 +7,13 @@ import uvicorn
 import random
 from demo_scenarios import DemoScenarios, ScenarioResult
 from performance_config import performance_config, get_deployment_config
+from mcp_integration import mcp_manager
+from real_data_integrations import get_real_weather_data
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = FastAPI(title="EcoSmart AI Demo", description="Multi-Agent Energy Management System Demo")
 
@@ -106,6 +113,10 @@ async def get_current_energy():
 async def get_devices():
     return demo_devices
 
+@app.options("/api/devices/{device_id}/toggle")
+async def toggle_device_options(device_id: str):
+    return {"message": "OK"}
+
 @app.post("/api/devices/{device_id}/toggle")
 async def toggle_device(device_id: str):
     for device in demo_devices:
@@ -139,13 +150,24 @@ async def toggle_device(device_id: str):
 # Weather endpoints
 @app.get("/api/weather/current")
 async def get_current_weather():
+    """Get current weather data - now using REAL API data!"""
+    try:
+        # Try to get real weather data first
+        real_weather_data = await get_real_weather_data()
+        if real_weather_data and real_weather_data.get("source") != "Demo":
+            return real_weather_data
+    except Exception as e:
+        print(f"⚠️ Real weather API failed, using fallback: {e}")
+    
+    # Fallback to demo data if real API fails
     return {
         "temperature": 22 + random.randint(-5, 8),
         "humidity": 65 + random.randint(-10, 15),
         "wind_speed": 12 + random.randint(-5, 10),
         "description": random.choice(["Sunny", "Partly Cloudy", "Cloudy", "Clear"]),
         "solar_potential": 8.5 + random.random() * 2,
-        "cooling_needs": 5.2 + random.random() * 3
+        "cooling_needs": 5.2 + random.random() * 3,
+        "source": "Demo Fallback"
     }
 
 # Agent status endpoints
@@ -393,6 +415,32 @@ async def get_performance_metrics():
         "total_energy_savings": sum(r["result"].cost_savings_dh for r in scenario_results),
         "average_efficiency": sum(r["result"].energy_savings for r in scenario_results) / len(scenario_results) if scenario_results else 0
     }
+
+# MCP Integration endpoints
+@app.get("/api/mcp/status")
+async def get_mcp_status():
+    """Get MCP integration status and dashboard data"""
+    try:
+        return await mcp_manager.get_dashboard_data()
+    except Exception as e:
+        return {"error": f"Failed to get MCP status: {str(e)}"}
+
+@app.get("/api/mcp/report")
+async def get_mcp_report():
+    """Get comprehensive MCP integration report"""
+    try:
+        return mcp_manager.generate_report()
+    except Exception as e:
+        return {"error": f"Failed to generate MCP report: {str(e)}"}
+
+@app.post("/api/mcp/initialize")
+async def initialize_mcp():
+    """Initialize MCP integration"""
+    try:
+        result = await mcp_manager.initialize()
+        return {"success": result, "message": "MCP integration initialized"}
+    except Exception as e:
+        return {"error": f"Failed to initialize MCP: {str(e)}"}
 
 @app.get("/")
 async def root():
