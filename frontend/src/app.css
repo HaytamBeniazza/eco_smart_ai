@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-lg shadow-md p-6 border border-gray-200;
+  }
+  
+  .btn-primary {
+    @apply bg-eco-green text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 transition-colors;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors;
+  }
+  
+  .metric-card {
+    @apply card flex flex-col items-center text-center min-h-[120px] justify-center;
+  }
+  
+  .device-card {
+    @apply card hover:shadow-lg transition-shadow cursor-pointer;
+  }
+  
+  .status-indicator {
+    @apply w-3 h-3 rounded-full;
+  }
+  
+  .status-online {
+    @apply bg-green-500;
+  }
+  
+  .status-offline {
+    @apply bg-red-500;
+  }
+  
+  .status-idle {
+    @apply bg-yellow-500;
+  }
+
+  .toggle-checkbox {
+    @apply w-5 h-5 text-eco-green bg-gray-100 border-gray-300 rounded focus:ring-eco-green focus:ring-2 cursor-pointer;
+  }
+} 
