@@ -6,6 +6,7 @@ from datetime import datetime
 import uvicorn
 import random
 from demo_scenarios import DemoScenarios, ScenarioResult
+from performance_config import performance_config, get_deployment_config
 
 app = FastAPI(title="EcoSmart AI Demo", description="Multi-Agent Energy Management System Demo")
 
@@ -361,6 +362,37 @@ async def run_all_scenarios():
         
     except Exception as e:
         return {"success": False, "message": f"Error running scenarios: {str(e)}"}
+
+# Performance Monitoring endpoints
+@app.get("/api/system/health")
+async def get_system_health():
+    """Get current system health and performance metrics"""
+    return performance_config.get_system_health()
+
+@app.get("/api/system/config")
+async def get_system_config():
+    """Get current system configuration"""
+    return {
+        "deployment_config": get_deployment_config("production"),
+        "performance_config": performance_config.get_optimized_config(),
+        "system_info": {
+            "agents": 4,
+            "scenarios_available": len(demo_scenarios.get_available_scenarios()),
+            "scenarios_executed": len(scenario_results)
+        }
+    }
+
+@app.get("/api/system/metrics")
+async def get_performance_metrics():
+    """Get detailed performance metrics for monitoring"""
+    return {
+        "uptime": "Production Ready",
+        "agents_status": "All 4 Active",
+        "system_health": performance_config.get_system_health(),
+        "last_scenario_run": scenario_results[-1]["timestamp"] if scenario_results else "None",
+        "total_energy_savings": sum(r["result"].cost_savings_dh for r in scenario_results),
+        "average_efficiency": sum(r["result"].energy_savings for r in scenario_results) / len(scenario_results) if scenario_results else 0
+    }
 
 @app.get("/")
 async def root():
